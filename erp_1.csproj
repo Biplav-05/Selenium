@@ -10,4 +10,12 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <!-- Exclude the SeleniumTests sub-project from this build -->
+  <ItemGroup>
+    <Compile Remove="SeleniumTests/**" />
+    <Content Remove="SeleniumTests/**" />
+    <EmbeddedResource Remove="SeleniumTests/**" />
+    <None Remove="SeleniumTests/**" />
+  </ItemGroup>
+
 </Project>
