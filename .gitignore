@@ -1,0 +1,124 @@
+# =========================
+
+# Build results
+
+# =========================
+
+bin/
+obj/
+out/
+
+# =========================
+
+# User-specific files
+
+# =========================
+
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# =========================
+
+# Rider / VS Code / VS
+
+# =========================
+
+.vs/
+.vscode/
+.idea/
+
+# =========================
+
+# Logs
+
+# =========================
+
+*.log
+
+# =========================
+
+# OS files
+
+# =========================
+
+.DS_Store
+Thumbs.db
+
+# =========================
+
+# Environment files
+
+# =========================
+
+.env
+.env.*
+
+# =========================
+
+# ASP.NET Core
+
+# =========================
+
+appsettings.Development.json
+appsettings.*.Development.json
+secrets.json
+
+# =========================
+
+# Publish output
+
+# =========================
+
+publish/
+*.publishproj
+
+# =========================
+
+# NuGet
+
+# =========================
+
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+# =========================
+
+# Coverage / Test Results
+
+# =========================
+
+coverage/
+TestResults/
+
+# =========================
+
+# Dotnet tools
+
+# =========================
+
+.dotnet/
+
+# =========================
+
+# Database files (optional)
+
+# =========================
+
+*.mdf
+*.ldf
+*.db
+
+# =========================
+
+# Misc
+
+# =========================
+
+*.swp
+*.tmp
+*.cache
+node_modules/
