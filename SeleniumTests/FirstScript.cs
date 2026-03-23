@@ -10,7 +10,9 @@ public class FirstScript
     public void EightComponents()
     {
         Console.WriteLine("Starting Selenium Test...");
-        IWebDriver driver = new ChromeDriver();
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
+        IWebDriver driver = new ChromeDriver(chromeOptions);
         driver.Manage().Window.Maximize();
         Console.WriteLine("Browser window maximized.");
 
@@ -43,17 +45,17 @@ public class FirstScript
                 var el = d.FindElement(By.Id("modalTitle"));
                 return el.Displayed && el.Text.Length > 0 ? el : null;
             });
-            Thread.Sleep(5000);
+            // Thread.Sleep(5000);
 
             Console.WriteLine("Assertion: Modal Title = " + modalTitle!.Text);
-            Assert.That(modalTitle.Text, Is.EqualTo("Add Old Product"));
+            Assert.That(modalTitle.Text, Is.EqualTo("Add New Product"));
 
             Console.WriteLine("Assertion: Heading = " + heading.Text);
             Assert.That(heading.Text, Is.EqualTo("Product Inventory"));
 
             // For learning/debugging: wait so you can see the screen
             Console.WriteLine("Waiting 5 seconds for visual verification...");
-            Thread.Sleep(5000);
+            // Thread.Sleep(5000);
         }
         catch (Exception ex)
         {
