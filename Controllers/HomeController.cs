@@ -8,4 +8,10 @@ public class HomeController : Controller
     {
         return View();
     }
+
+    [Route("Test")]
+    public IActionResult Test()
+    {
+        return View();
+    }
 }
