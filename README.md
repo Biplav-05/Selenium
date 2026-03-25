@@ -50,7 +50,7 @@ To ensure distributed test execution and standard environments, we utilize **Sel
 *   **Docker Hub/Node Setup**: Instead of maintaining a local driver installation, we run a **Selenium Hub** and a **Chrome Node** in containers.
 *   **Browser Isolation**: The Chrome browser runs inside Docker, meaning no Chrome windows pop up and no system configurations are changed on your local OS.
 *   **Scaling and Performance**: You can spin up multiple browsers simultaneously using the `--scale` flag. The project is pre-configured to run tests in parallel across all available nodes.
-*   **Visual Debugging**: Use Port **7900** for NoVNC (Password: `secret`) to watch the tests live at [http://localhost:7900](http://localhost:7900).
+*   **Visual Debugging**: Use Port **7900** for NoVNC (Password: `secret`) to watch the tests live at http://localhost:7900.
 
 ### Environment Configuration
 The project is configured to respond to environment variables defined in a `.env` file. This allows for seamless transitions between local and Docker environments.
@@ -80,7 +80,40 @@ To facilitate easy review during screen recordings, strategic `Thread.Sleep()` c
 
 ---
 
-## 🚀 How to Run the Project
+## Advanced Reporting (Allure)
+
+We use **Allure Framework** for high-level, interactive test reporting. This provides a "CEO-level" dashboard to visualize test outcomes, trends, and stability.
+
+### Use Cases
+*   **Stakeholder Communication**: Present beautiful pie charts and graphs to managers.
+*   **Failure Analysis**: Instant access to **screenshots** and **logs** for every failed test.
+*   **Performance Monitoring**: The "Timeline" view shows how tests are distributed across parallel workers.
+*   **Historical Trends**: Track if the system is becoming more or less stable over time.
+
+### Implementation Strategy
+The Allure integration follows these steps:
+1.  **NuGet Packages**: Integrated `Allure.NUnit` and `Allure.Net.Commons` into the test project.
+2.  **Global Config**: Managed via `allureConfig.json` in the project root.
+3.  **Visual Proof**: A custom `TakeScreenshot()` helper in each `[TearDown]` captures the browser state only when a test fails.
+4.  **Metadata Attributes**: Classes are tagged with `[AllureNUnit]` and `[AllureSuite]` for organized reporting.
+
+### How to View the Report
+
+#### 1. Local View
+After running `dotnet test`, generate and open the dashboard (requires Allure CLI):
+```bash
+allure serve SeleniumTests/bin/Debug/net8.0/allure-results
+```
+
+#### 2. Remote/Network View (Share with Team)
+To share the dashboard across your local network, specify the IP and Port:
+```bash
+allure serve -p <PORT> --host <IP_ADDRESS> SeleniumTests/bin/Debug/net8.0/allure-results
+```
+
+---
+
+## How to Run the Project
 
 ### Step 1: Set up the Configuration
 1.  Verify the **[.env](.env)** file exists in the root directory.
@@ -117,38 +150,5 @@ dotnet test SeleniumTests/erp_1.SeleniumTests.csproj
 
 ### Step 5: (Optional) Visualize Docker Testing
 If running in Docker, you can watch the browser live:
-1.  Open Chrome/Firefox and go to: [http://localhost:7900](http://localhost:7900)
+1.  Open Chrome/Firefox and go to: http://localhost:7900
 2.  Click **Connect** and enter password: `secret`
-
----
-
-## Advanced Reporting (Allure)
-
-We use **Allure Framework** for high-level, interactive test reporting. This provides a "CEO-level" dashboard to visualize test outcomes, trends, and stability.
-
-### Use Cases
-*   **Stakeholder Communication**: Present beautiful pie charts and graphs to managers.
-*   **Failure Analysis**: Instant access to **screenshots** and **logs** for every failed test.
-*   **Performance Monitoring**: The "Timeline" view shows how tests are distributed across parallel workers.
-*   **Historical Trends**: Track if the system is becoming more or less stable over time.
-
-### Implementation Strategy
-The Allure integration follows these steps:
-1.  **NuGet Packages**: Integrated `Allure.NUnit` and `Allure.Net.Commons` into the test project.
-2.  **Global Config**: Managed via `allureConfig.json` in the project root.
-3.  **Visual Proof**: A custom `TakeScreenshot()` helper in each `[TearDown]` captures the browser state only when a test fails.
-4.  **Metadata Attributes**: Classes are tagged with `[AllureNUnit]` and `[AllureSuite]` for organized reporting.
-
-### How to View the Report
-
-#### 1. Local View
-After running `dotnet test`, generate and open the dashboard (requires Allure CLI):
-```bash
-allure serve SeleniumTests/bin/Debug/net8.0/allure-results
-```
-
-#### 2. Remote/Network View (Share with Team)
-To share the dashboard across your local network, specify the IP and Port:
-```bash
-allure serve -p <PORT> --host <IP_ADDRESS> SeleniumTests/bin/Debug/net8.0/allure-results
-```
