@@ -78,7 +78,9 @@ The `SeleniumTests` project is organized into meaningful test suites for better 
 ## Visual Demonstration Mode
 To facilitate easy review during screen recordings, strategic `Thread.Sleep()` calls have been added between major UI actions. This intentionally slows down the automation so that transitions, modal openings, and data entries are clearly visible to the human eye.
 
-## How to Run the Project
+---
+
+## 🚀 How to Run the Project
 
 ### Step 1: Set up the Configuration
 1.  Verify the **[.env](.env)** file exists in the root directory.
@@ -120,7 +122,7 @@ If running in Docker, you can watch the browser live:
 
 ---
 
-## 📊 Advanced Reporting (Allure)
+## Advanced Reporting (Allure)
 
 We use **Allure Framework** for high-level, interactive test reporting. This provides a "CEO-level" dashboard to visualize test outcomes, trends, and stability.
 
@@ -150,4 +152,3 @@ To share the dashboard across your local network, specify the IP and Port:
 ```bash
 allure serve -p <PORT> --host <IP_ADDRESS> SeleniumTests/bin/Debug/net8.0/allure-results
 ```
-
