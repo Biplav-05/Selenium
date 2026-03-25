@@ -44,15 +44,18 @@ The suite employs two types of waits to handle the asynchronous nature of modern
 ### 5. Test Assertion Engine
 *   **NUnit Assertions:** Used to verify application state, such as `Assert.That(myProductCard, Is.Not.Null)` and `Assert.That(title, Is.EqualTo(...))`.
 
-## Selenium Grid Infrastructure
-The project is now configured to support distributed test execution via **Selenium Grid**. This provides several advantages when sharing the project with a CTO or dev team:
+## Selenium Grid and Docker Infrastructure
+To ensure distributed test execution and standard environments, we utilize **Selenium Grid** along with **Docker Compose**. This setup provides several advantages:
 
-*   **Remote Execution:** Instead of driving a local browser on your developer machine, the tests connect to a host at `http://localhost:4444`.
-*   **Scalability:** Multiple browser nodes can be attached to the Grid, allowing for future parallel execution.
-*   **Infrastructure Isolation:** It demonstrates that the testing suite is "Cloud Ready" and can be easily integrated into a CI/CD pipeline (e.g., Azure DevOps, Jenkins, or GitHub Actions).
+*   **Docker Hub/Node Setup**: Instead of maintaining a local driver installation, we run a **Selenium Hub** and a **Chrome Node** in containers.
+*   **Browser Isolation**: The Chrome browser runs inside Docker, meaning no Chrome windows pop up and no system configurations are changed on your local OS.
+*   **Scalability**: You can easily scale the grid to multiple nodes for parallel execution.
+*   **Visual Debugging**: Use Port **7900** for NoVNC (Password: `secret`) to watch the tests live at [http://localhost:7900](http://localhost:7900).
 
-### Selenium Manager (Integrated)
-We still leverage Selenium Manager (built-in to v4), which ensures that whichever machine is hosting the Grid standalone server will have the correct browser drivers discovered and downloaded automatically.
+### Environment Configuration
+The project is configured to respond to environment variables defined in a `.env` file. This allows for seamless transitions between local and Docker environments.
+*   Check out the **[Configuration Guide (config.md)](config.md)** for more details on each variable.
+
 
 ## Test Suite Details
 The `SeleniumTests` project is organized into meaningful test suites for better maintenance and clarity:
@@ -75,43 +78,42 @@ The `SeleniumTests` project is organized into meaningful test suites for better 
 ## Visual Demonstration Mode
 To facilitate easy review during screen recordings for stakeholders (e.g., CTO), strategic `Thread.Sleep()` calls have been added between major UI actions. This intentionally slows down the automation so that transitions, modal openings, and data entries are clearly visible to the human eye.
 
-## How to Run the Tests
+## How to Run the Project
 
-### Cloud-Ready Configuration (Advanced)
-If you move the application to a remote server (e.g., Azure or AWS), you don't need to change the source code. The suite is configured to read the application's URL from an environment variable:
+### Step 1: Set up the Configuration
+1.  Verify the **[.env](.env)** file exists in the root directory.
+2.  Set `IS_LOCAL_SETUP=false` to use the Docker Grid (Recommended).
+3.  Set `IS_LOCAL_SETUP=true` to use your computer's local Chrome browser.
 
-*   **Variable Name:** `ERP_URL`
-*   **Default:** `http://localhost:5080/Home/`
-
-To run against a remote environment, set the variable before executing the tests:
+### Step 2: Start the Selenium Infrastructure (Docker Only)
+If you chose the Docker mode (Step 1), start the Grid:
 ```bash
-export ERP_URL="http://your-remote-server.com/Home/"
-dotnet test SeleniumTests/erp_1.SeleniumTests.csproj
+docker-compose up -d
 ```
 
-### Step 1: Start the ERP Application
-Before running the UI tests, the application must be running locally.
-1.  Navigate to the project root directory.
-2.  Run the application using the following command:
-    ```bash
-    dotnet run
-    ```
-3.  Ensure the application is accessible at `http://localhost:5080`.
+### Step 3: Run the ERP Application
+Ensure the application is running locally:
+```bash
+dotnet run
+```
+*The app is configured in `launchSettings.json` to listen on `0.0.0.0:5080` so Docker can reach it.*
 
-### Step 2: Execute the Selenium Tests
-1.  Open a new terminal session.
-2.  Navigate to the `SeleniumTests` directory:
-    ```bash
-    cd SeleniumTests
-    ```
-3.  Execute the tests using the .NET CLI:
-    ```bash
-    dotnet test
-    ```
-Alternatively, you can run the tests directly from the root directory:
+### Step 4: Execute the Selenium Tests
+Execute the test suite using the .NET CLI:
 ```bash
 dotnet test SeleniumTests/erp_1.SeleniumTests.csproj
 ```
+
+### Step 5: (Optional) Visualize Docker Testing
+If running in Docker, you can watch the browser live:
+1.  Open Chrome/Firefox and go to: [http://localhost:7900](http://localhost:7900)
+2.  Click **Connect** and enter password: `secret`
+
+---
+
+## Reviewing Test Results
+After execution, the terminal will provide a summary of the test run. Detailed console logs (e.g., "Testing CREATE...", "CRUD Lifecycle Test Passed!") are produced by each test for easier debugging and stakeholders review.
+
 
 ## Reviewing Test Results
 After execution, the terminal will provide a summary of passed and failed tests. Detailed logs, including console output from the tests (e.g., "Testing CREATE...", "CRUD Lifecycle Test Passed!"), can be used for debugging and verification of specific steps.
