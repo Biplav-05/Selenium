@@ -120,9 +120,34 @@ If running in Docker, you can watch the browser live:
 
 ---
 
-## Reviewing Test Results
-After execution, the terminal will provide a summary of the test run. Detailed console logs (e.g., "Testing CREATE...", "CRUD Lifecycle Test Passed!") are produced by each test for easier debugging and stakeholders review.
+## 📊 Advanced Reporting (Allure)
 
+We use **Allure Framework** for high-level, interactive test reporting. This provides a "CEO-level" dashboard to visualize test outcomes, trends, and stability.
 
-## Reviewing Test Results
-After execution, the terminal will provide a summary of passed and failed tests. Detailed logs, including console output from the tests (e.g., "Testing CREATE...", "CRUD Lifecycle Test Passed!"), can be used for debugging and verification of specific steps.
+### Use Cases
+*   **Stakeholder Communication**: Present beautiful pie charts and graphs to managers.
+*   **Failure Analysis**: Instant access to **screenshots** and **logs** for every failed test.
+*   **Performance Monitoring**: The "Timeline" view shows how tests are distributed across parallel workers.
+*   **Historical Trends**: Track if the system is becoming more or less stable over time.
+
+### Implementation Strategy
+The Allure integration follows these steps:
+1.  **NuGet Packages**: Integrated `Allure.NUnit` and `Allure.Net.Commons` into the test project.
+2.  **Global Config**: Managed via `allureConfig.json` in the project root.
+3.  **Visual Proof**: A custom `TakeScreenshot()` helper in each `[TearDown]` captures the browser state only when a test fails.
+4.  **Metadata Attributes**: Classes are tagged with `[AllureNUnit]` and `[AllureSuite]` for organized reporting.
+
+### How to View the Report
+
+#### 1. Local View
+After running `dotnet test`, generate and open the dashboard (requires Allure CLI):
+```bash
+allure serve SeleniumTests/bin/Debug/net8.0/allure-results
+```
+
+#### 2. Remote/Network View (Share with Team)
+To share the dashboard across your local network, specify the IP and Port:
+```bash
+allure serve -p <PORT> --host <IP_ADDRESS> SeleniumTests/bin/Debug/net8.0/allure-results
+```
+
