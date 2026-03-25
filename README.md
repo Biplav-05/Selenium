@@ -76,7 +76,7 @@ The `SeleniumTests` project is organized into meaningful test suites for better 
 *   **Key Checks:** Page titles, header verification, and modal trigger validation.
 
 ## Visual Demonstration Mode
-To facilitate easy review during screen recordings for stakeholders (e.g., CTO), strategic `Thread.Sleep()` calls have been added between major UI actions. This intentionally slows down the automation so that transitions, modal openings, and data entries are clearly visible to the human eye.
+To facilitate easy review during screen recordings, strategic `Thread.Sleep()` calls have been added between major UI actions. This intentionally slows down the automation so that transitions, modal openings, and data entries are clearly visible to the human eye.
 
 ## How to Run the Project
 
