@@ -49,7 +49,7 @@ To ensure distributed test execution and standard environments, we utilize **Sel
 
 *   **Docker Hub/Node Setup**: Instead of maintaining a local driver installation, we run a **Selenium Hub** and a **Chrome Node** in containers.
 *   **Browser Isolation**: The Chrome browser runs inside Docker, meaning no Chrome windows pop up and no system configurations are changed on your local OS.
-*   **Scalability**: You can easily scale the grid to multiple nodes for parallel execution.
+*   **Scaling and Performance**: You can spin up multiple browsers simultaneously using the `--scale` flag. The project is pre-configured to run tests in parallel across all available nodes.
 *   **Visual Debugging**: Use Port **7900** for NoVNC (Password: `secret`) to watch the tests live at [http://localhost:7900](http://localhost:7900).
 
 ### Environment Configuration
@@ -86,10 +86,19 @@ To facilitate easy review during screen recordings, strategic `Thread.Sleep()` c
 3.  Set `IS_LOCAL_SETUP=true` to use your computer's local Chrome browser.
 
 ### Step 2: Start the Selenium Infrastructure (Docker Only)
-If you chose the Docker mode (Step 1), start the Grid:
-```bash
-docker-compose up -d
-```
+Depending on your performance needs, start the Grid:
+
+*   **Standard (1 Browser)**:
+    ```bash
+    docker-compose up -d
+    ```
+*   **High Performance (3 Parallel Browsers)**:
+    ```bash
+    docker-compose up --scale chrome-node=3 -d
+    ```
+
+### Parallel Execution (Automated)
+The project is pre-configured in `GlobalUsings.cs` to run up to **3 tests in parallel**. When you scale the Chrome nodes to 3, the total test execution time will be significantly reduced because all browsers will be utilized simultaneously.
 
 ### Step 3: Run the ERP Application
 Ensure the application is running locally:
