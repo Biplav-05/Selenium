@@ -4,8 +4,11 @@ using OpenQA.Selenium.Support.UI;
 
 namespace erp_1.SeleniumTests;
 
+[AllureNUnit]
+[AllureSuite("DashboardConnectivityTests")]
 public class DashboardConnectivityTests
 {
+    private IWebDriver driver;
     private string BaseUrl;
     private string HubUrl;
     private bool IsLocal;
@@ -24,7 +27,6 @@ public class DashboardConnectivityTests
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
 
-        IWebDriver driver;
         if (IsLocal)
         {
             driver = new ChromeDriver(chromeOptions);
@@ -86,8 +88,34 @@ public class DashboardConnectivityTests
         finally
         {
             // 7. End the session
-            Console.WriteLine("Closing Driver.");
-            driver.Quit();
+            try
+            {
+                if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Failed)
+                {
+                    TakeScreenshot("FailureScreenshot_Dashboard");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error capturing screenshot: " + ex.Message);
+            }
+            finally
+            {
+                Console.WriteLine("Closing Driver.");
+                driver?.Quit();
+                driver?.Dispose();
+            }
+        }
+    }
+
+    private void TakeScreenshot(string name)
+    {
+        if (driver is ITakesScreenshot ts)
+        {
+            var screenshot = ts.GetScreenshot();
+            var path = name + "_" + DateTime.Now.Ticks + ".png";
+            screenshot.SaveAsFile(path);
+            AllureApi.AddAttachment(name, "image/png", path);
         }
     }
 

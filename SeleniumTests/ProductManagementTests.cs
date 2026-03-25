@@ -6,6 +6,8 @@ using System.Linq;
 
 namespace erp_1.SeleniumTests;
 
+[AllureNUnit]
+[AllureSuite("ProductManagementTests")]
 public class ProductManagementTests
 {
     private IWebDriver _driver;
@@ -43,8 +45,33 @@ public class ProductManagementTests
     [TearDown]
     public void Teardown()
     {
-        _driver?.Quit();
-        _driver?.Dispose();
+        try
+        {
+            if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Failed)
+            {
+                TakeScreenshot("FailureScreenshot");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error capturing screenshot: " + ex.Message);
+        }
+        finally
+        {
+            _driver?.Quit();
+            _driver?.Dispose();
+        }
+    }
+
+    private void TakeScreenshot(string name)
+    {
+        if (_driver is ITakesScreenshot ts)
+        {
+            var screenshot = ts.GetScreenshot();
+            var path = name + "_" + DateTime.Now.Ticks + ".png";
+            screenshot.SaveAsFile(path);
+            AllureApi.AddAttachment(name, "image/png", path);
+        }
     }
 
     [Test]
