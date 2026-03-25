@@ -13,10 +13,23 @@ public class ElementInteractionTests
     [SetUp]
     public void Setup()
     {
+        // Load environment variables
+        DotNetEnv.Env.TraversePath().Load();
+        
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
 
-        _driver = new ChromeDriver(chromeOptions);
+        bool isLocal = GetEnvVar("IS_LOCAL_SETUP").ToLower() == "true";
+        string hubUrl = GetEnvVar("SEL_GRID_HUB_URL");
+
+        if (isLocal)
+        {
+            _driver = new ChromeDriver(chromeOptions);
+        }
+        else
+        {
+            _driver = new RemoteWebDriver(new Uri(hubUrl), chromeOptions);
+        }
         _driver.Manage().Window.Maximize();
         _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(5));
         
@@ -82,5 +95,15 @@ public class ElementInteractionTests
         Assert.That(data, Is.EqualTo(string.Empty), "Email input value should be empty after clearing.");
         
         Console.WriteLine("Element Interactions Test Passed!");
+    }
+
+    private string GetEnvVar(string key)
+    {
+        var value = Environment.GetEnvironmentVariable(key);
+        if (string.IsNullOrEmpty(value))
+        {
+            throw new Exception($"Environment variable '{key}' is missing in the .env file.");
+        }
+        return value;
     }
 }

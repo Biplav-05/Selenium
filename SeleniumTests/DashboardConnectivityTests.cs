@@ -6,21 +6,41 @@ namespace erp_1.SeleniumTests;
 
 public class DashboardConnectivityTests
 {
+    private string BaseUrl;
+    private string HubUrl;
+    private bool IsLocal;
+
     [Test]
     public void ShouldVerifyDashboardConnectivity()
     {
+        // Load environment variables
+        DotNetEnv.Env.TraversePath().Load();
+
+        IsLocal = GetEnvVar("IS_LOCAL_SETUP").ToLower() == "true";
+        HubUrl = GetEnvVar("SEL_GRID_HUB_URL");
+        BaseUrl = IsLocal ? GetEnvVar("APP_URL_LOCAL") : GetEnvVar("APP_URL_DOCKER");
+
         Console.WriteLine("Starting Dashboard Connectivity Test...");
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
-        IWebDriver driver = new ChromeDriver(chromeOptions);
+
+        IWebDriver driver;
+        if (IsLocal)
+        {
+            driver = new ChromeDriver(chromeOptions);
+        }
+        else
+        {
+            driver = new RemoteWebDriver(new Uri(HubUrl), chromeOptions);
+        }
         driver.Manage().Window.Maximize();
         Console.WriteLine("Browser window maximized.");
 
         try
         {
             // 1. Navigate to your app
-            Console.WriteLine("Navigating to App: http://localhost:5080/Home/");
-            driver.Navigate().GoToUrl("http://localhost:5080/Home/");
+            Console.WriteLine($"Navigating to App: {BaseUrl}");
+            driver.Navigate().GoToUrl(BaseUrl);
             Thread.Sleep(2000); // Wait to visualize the home page
 
             // 2. Request browser information
@@ -69,6 +89,16 @@ public class DashboardConnectivityTests
             Console.WriteLine("Closing Driver.");
             driver.Quit();
         }
+    }
+
+    private string GetEnvVar(string key)
+    {
+        var value = Environment.GetEnvironmentVariable(key);
+        if (string.IsNullOrEmpty(value))
+        {
+            throw new Exception($"Environment variable '{key}' is missing in the .env file.");
+        }
+        return value;
     }
 }
 

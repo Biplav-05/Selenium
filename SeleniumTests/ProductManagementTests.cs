@@ -10,15 +10,32 @@ public class ProductManagementTests
 {
     private IWebDriver _driver;
     private WebDriverWait _wait;
-    private const string BaseUrl = "http://localhost:5080/Home/";
+    private bool IsLocal;
+    private string HubUrl;
+    private string BaseUrl;
 
     [SetUp]
     public void Setup()
     {
+        // Load environment variables from .env file
+        DotNetEnv.Env.TraversePath().Load();
+
+        IsLocal = GetEnvVar("IS_LOCAL_SETUP").ToLower() == "true";
+        HubUrl = GetEnvVar("SEL_GRID_HUB_URL");
+        BaseUrl = IsLocal ? GetEnvVar("APP_URL_LOCAL") : GetEnvVar("APP_URL_DOCKER");
+
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
 
-        _driver = new ChromeDriver(chromeOptions);
+        if (IsLocal)
+        {
+            _driver = new ChromeDriver(chromeOptions);
+        }
+        else
+        {
+            _driver = new RemoteWebDriver(new Uri(HubUrl), chromeOptions);
+        }
+        
         _driver.Manage().Window.Maximize();
         _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(5));
     }
@@ -163,5 +180,15 @@ public class ProductManagementTests
 
         bool isModalActive = _driver.FindElement(By.Id("productModal")).GetAttribute("class").Contains("active");
         Assert.That(isModalActive, Is.True, "Modal should remain active due to invalid price.");
+    }
+
+    private string GetEnvVar(string key)
+    {
+        var value = Environment.GetEnvironmentVariable(key);
+        if (string.IsNullOrEmpty(value))
+        {
+            throw new Exception($"Environment variable '{key}' is missing in the .env file.");
+        }
+        return value;
     }
 }

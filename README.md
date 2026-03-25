@@ -44,8 +44,15 @@ The suite employs two types of waits to handle the asynchronous nature of modern
 ### 5. Test Assertion Engine
 *   **NUnit Assertions:** Used to verify application state, such as `Assert.That(myProductCard, Is.Not.Null)` and `Assert.That(title, Is.EqualTo(...))`.
 
-## Selenium Manager
-This project leverages Selenium Manager, which is included by default in Selenium 4. This feature simplifies driver management by automatically discovering and downloading the correct version of ChromeDriver for your installed version of Chrome. No manual driver setup or path configuration is necessary.
+## Selenium Grid Infrastructure
+The project is now configured to support distributed test execution via **Selenium Grid**. This provides several advantages when sharing the project with a CTO or dev team:
+
+*   **Remote Execution:** Instead of driving a local browser on your developer machine, the tests connect to a host at `http://localhost:4444`.
+*   **Scalability:** Multiple browser nodes can be attached to the Grid, allowing for future parallel execution.
+*   **Infrastructure Isolation:** It demonstrates that the testing suite is "Cloud Ready" and can be easily integrated into a CI/CD pipeline (e.g., Azure DevOps, Jenkins, or GitHub Actions).
+
+### Selenium Manager (Integrated)
+We still leverage Selenium Manager (built-in to v4), which ensures that whichever machine is hosting the Grid standalone server will have the correct browser drivers discovered and downloaded automatically.
 
 ## Test Suite Details
 The `SeleniumTests` project is organized into meaningful test suites for better maintenance and clarity:
@@ -69,6 +76,18 @@ The `SeleniumTests` project is organized into meaningful test suites for better 
 To facilitate easy review during screen recordings for stakeholders (e.g., CTO), strategic `Thread.Sleep()` calls have been added between major UI actions. This intentionally slows down the automation so that transitions, modal openings, and data entries are clearly visible to the human eye.
 
 ## How to Run the Tests
+
+### Cloud-Ready Configuration (Advanced)
+If you move the application to a remote server (e.g., Azure or AWS), you don't need to change the source code. The suite is configured to read the application's URL from an environment variable:
+
+*   **Variable Name:** `ERP_URL`
+*   **Default:** `http://localhost:5080/Home/`
+
+To run against a remote environment, set the variable before executing the tests:
+```bash
+export ERP_URL="http://your-remote-server.com/Home/"
+dotnet test SeleniumTests/erp_1.SeleniumTests.csproj
+```
 
 ### Step 1: Start the ERP Application
 Before running the UI tests, the application must be running locally.
