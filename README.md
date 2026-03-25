@@ -45,7 +45,7 @@ The suite employs two types of waits to handle the asynchronous nature of modern
 *   **NUnit Assertions:** Used to verify application state, such as `Assert.That(myProductCard, Is.Not.Null)` and `Assert.That(title, Is.EqualTo(...))`.
 
 ## Selenium Grid and Docker Infrastructure
-To ensure distributed test execution and standard environments, we utilize **Selenium Grid** along with **Docker Compose**. This setup provides several advantages:
+To ensure distributed test execution and standard environments, we utilize **Standalone Selenium Grid** along with **Docker Compose**. This setup provides several advantages:
 
 *   **Docker Hub/Node Setup**: Instead of maintaining a local driver installation, we run a **Selenium Hub** and a **Chrome Node** in containers.
 *   **Browser Isolation**: The Chrome browser runs inside Docker, meaning no Chrome windows pop up and no system configurations are changed on your local OS.
@@ -82,7 +82,7 @@ To facilitate easy review during screen recordings, strategic `Thread.Sleep()` c
 
 ## Advanced Reporting (Allure)
 
-We use **Allure Framework** for high-level, interactive test reporting. This provides a "CEO-level" dashboard to visualize test outcomes, trends, and stability.
+We use **Allure Framework** for high-level, interactive test reporting. This provides a "dashboard" to visualize test outcomes, trends, and stability.
 
 ### Use Cases
 *   **Stakeholder Communication**: Present beautiful pie charts and graphs to managers.
@@ -125,11 +125,11 @@ Depending on your performance needs, start the Grid:
 
 *   **Standard (1 Browser)**:
     ```bash
-    docker-compose up -d
+    docker compose up -d
     ```
 *   **High Performance (3 Parallel Browsers)**:
     ```bash
-    docker-compose up --scale chrome-node=3 -d
+    docker compose up --scale chrome-node=3 -d
     ```
 
 ### Parallel Execution (Automated)
